@@ -14,7 +14,13 @@ function switchTab() {
 function watchDog() {
     console.log('Wake up to check');
     if (stopBeforeRedirect()) {
-        stopGame();
+        console.log('Approaching redirect! Stop the game so we don\'t get redirected while loosing.');
+
+        $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
+            if ($(event.currentTarget).is(':contains("win")')) {
+                stopGame();
+            }
+        });
 
         return;
     }
@@ -70,9 +76,6 @@ function stopBeforeRedirect() {
     }
 
     if (minutes < stopBefore) {
-        console.log('Approaching redirect! Stop the game so we don\'t get redirected while loosing.');
-        stopGame();
-
         return true;
     }
 

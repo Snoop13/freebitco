@@ -67,9 +67,6 @@ function stopBeforeRedirect() {
     }
 
     if (minutes < stopBefore) {
-        console.log('Approaching redirect! Stop the game so we don\'t get redirected while loosing.');
-        stopGame();
-
         return true;
     }
 
@@ -90,6 +87,9 @@ $('#double_your_btc_bet_lose').bind("DOMSubtreeModified", function(event) {
 $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
     if ($(event.currentTarget).is(':contains("win")')) {
         if (stopBeforeRedirect()) {
+            console.log('Approaching redirect! Stop the game so we don\'t get redirected while loosing.');
+            stopGame();
+
             return;
         }
         if (hasEnoughMoney()) {
@@ -97,6 +97,7 @@ $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
             reset();
             if (stopped) {
                 stopped = false;
+
                 return false;
             }
         } else {
