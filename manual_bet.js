@@ -1,16 +1,3 @@
-# Freebitco js script
-
-1. Install Chrome Extension
-   [Custom Javascript For Web](https://chrome.google.com/webstore/detail/custom-javascript-for-web/poakhlngfciodnhlhhgnaaelnpjljija)
-
-2. Save js for Freebitco
-   Open [Freebitco](https://freebitco.in/?r=11646056), copy the following javascript code and paste into Custom Javascript For Web  
-   ![Custom Js For Freebitco](https://github.com/maxmilian/freebitco/blob/master/custom_js_for_freebitco.png)
-
-3. Enjoy the game
-
-## Manual Bet JS Code
-```js
 var startValue = '0.00000001', // start value of BET AMOUNT
     stopPercentage = 0.001,    // stop betting if balance is under this percentage
     maxWait = 777,             // max waiting time for next bet
@@ -109,7 +96,3 @@ $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
 });
 
 startGame();
-```
-
-## Remark
-1. Don't use this javascript with AUTO BET in the same time.
