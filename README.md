@@ -57,7 +57,7 @@ function hasEnoughMoney() {
 }
 
 function clickFreeRoll() {
-  $('#free_play_form_button').click()
+    $('#free_play_form_button').click()
 }
 
 function stopBeforeRedirect() {
@@ -93,7 +93,7 @@ $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
                 return false;
             }
         } else {
-            console.log('You WON! Betting again');
+            return;
         }
         setTimeout(function() {
             $hiloButton.click();
