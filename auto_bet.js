@@ -1,14 +1,42 @@
 var baseValue = '0.00000001',           // value of BASE BET
     rollCount = 100000,
-    increaseBetPercentWhenLose = 110,   // multiplier when you lose
-    stopBefore = 1,                     // In minutes for timer before stopping redirect on webpage
+    increaseBetPercentWhenLose = 0,     // multiplier when you lose. When set to 0, use dynamic multiplier
+    stopBefore = 30,                    // In seconds for timer before stopping redirect on webpage
+    stopAfterLoss = '0.00010000',       // stop game after loss, set 0 to disable
     $betOn = $('#autobet_bet_hi');      // set as $('#autobet_bet_hi') or $('#autobet_bet_lo') or $('#autobet_bet_alternate')
 
-function switchTab() {
-    if (!$('#auto_bet_on').is(':visible')) {
-        $(".double_your_btc_link2").click();
-        $('#auto_bet_on').click();
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+              break;
+            }
     }
+}
+
+function deExponentize(number) {
+    return number * 100000000;
+}
+
+function getDynamicPercentage() {
+    var balance = deExponentize($('#balance').text());
+    var maxLoseCount = Math.floor(Math.log(balance) / Math.log(2));
+    var percent = 2.00;
+
+    console.log('maxLoseCount: '+maxLoseCount);
+
+    do {
+        percent += 0.01;
+        loseCount = Math.floor(Math.log(balance) / Math.log(percent));
+        if (percent > 3) {
+            console.log('imposible percent, debug me');
+            break;
+        }
+    } while (loseCount >= maxLoseCount);
+
+    percent -= 0.01;
+
+    return ((percent - 1) * 100).toFixed(0);
 }
 
 function watchDog() {
@@ -34,13 +62,26 @@ function watchDog() {
     setTimeout(watchDog, 10000);
 }
 
+function initGame() {
+
+    // try to free roll
+    if ($('#free_play_form_button').is(':visible')) {
+        $('#free_play_form_button').click();
+        sleep(1500);
+    }
+
+    // switch to auto bet tab
+    if (!$('#auto_bet_on').is(':visible')) {
+        $(".double_your_btc_link2").click();
+        $('#auto_bet_on').click();
+    }
+}
+
 function startGame() {
     if ($('#stop_autobet_button').is(':visible')) {
         console.log('Game has started!');
         return;
     }
-
-    switchTab();
 
     setTimeout(watchDog, 10000);
 
@@ -58,7 +99,22 @@ function reset() {
     if (!$('#autobet_lose_increase_bet').is(':checked')) {
         $('#autobet_lose_increase_bet').click();
     }
-    $('#autobet_lose_increase_bet_percent').val(increaseBetPercentWhenLose);
+
+    if (parseFloat(stopAfterLoss) != 0) {
+        if (!$('#stop_after_loss').is(':checked')) {
+            $('#stop_after_loss').click();
+        }
+        $('#stop_after_loss_value').val(stopAfterLoss);
+    }
+
+    if (parseInt(increaseBetPercentWhenLose) == 0) {
+        var dynamicPercentage = getDynamicPercentage();
+        console.log('dynamicPercentage: ' + dynamicPercentage);
+
+        $('#autobet_lose_increase_bet_percent').val(dynamicPercentage);
+    } else {
+        $('#autobet_lose_increase_bet_percent').val(increaseBetPercentWhenLose);
+    }
 
     if (!$betOn.is(':checked')) {
         $betOn.click();
@@ -70,16 +126,18 @@ function rollFinished() {
 }
 
 function stopBeforeRedirect() {
-    var minutes = parseInt($('title').text());
-    if (isNaN(minutes)) {
-        return false;
+    var temp = $('title').text().match(/(\d+)/g);
+    if (temp == null) {
+        return;
     }
 
-    if (minutes < stopBefore) {
+    var seconds = parseInt(temp[0]) * 60 + parseInt(temp[1]);
+    if (seconds < stopBefore) {
         return true;
     }
 
     return false;
 }
 
+initGame();
 startGame();

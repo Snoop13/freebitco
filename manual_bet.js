@@ -3,19 +3,23 @@ var startValue = '0.00000001', // start value of BET AMOUNT
     maxWait = 777,             // max waiting time for next bet
     stopped = false,           // debugging
     multiplier = 2.1,          // multiplier when you lose
-    stopBefore = 1,            // In minutes for timer before stopping redirect on webpage
+    stopBefore = 30,           // In seconds for timer before stopping redirect on webpage
     $hiloButton = $('#double_your_btc_bet_hi_button');  // set as $('#double_your_btc_bet_hi_button') or $('#double_your_btc_bet_lo_button')
-
-function multiplyBet() {
-    var current = $('#double_your_btc_stake').val();
-    var multiply = (current * multiplier).toFixed(8);
-    $('#double_your_btc_stake').val(multiply);
-}
 
 function getRandomWait() {
     var wait = Math.floor(Math.random() * maxWait) + 100;
     console.log('Waiting for ' + wait + 'ms before next bet.');
     return wait;
+}
+
+function deExponentize(number) {
+    return number * 100000000;
+}
+
+function multiplyBet() {
+    var current = $('#double_your_btc_stake').val();
+    var multiply = (current * multiplier).toFixed(8);
+    $('#double_your_btc_stake').val(multiply);
 }
 
 function startGame() {
@@ -33,10 +37,6 @@ function reset() {
     $('#double_your_btc_stake').val(startValue);
 }
 
-function deExponentize(number) {
-    return number * 100000000;
-}
-
 function hasEnoughMoney() {
     var balance = deExponentize(parseFloat($('#balance').text()));
     var current = deExponentize($('#double_your_btc_stake').val());
@@ -48,12 +48,13 @@ function clickFreeRoll() {
 }
 
 function stopBeforeRedirect() {
-    var minutes = parseInt($('title').text());
-    if (isNaN(minutes)) {
-        return false;
+    var temp = $('title').text().match(/(\d+)/g);
+    if (temp == null) {
+        return;
     }
 
-    if (minutes < stopBefore) {
+    var seconds = parseInt(temp[0]) * 60 + parseInt(temp[1]);
+    if (seconds < stopBefore) {
         return true;
     }
 
