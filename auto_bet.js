@@ -73,7 +73,11 @@ function initGame() {
     // switch to auto bet tab
     if (!$('#auto_bet_on').is(':visible')) {
         $(".double_your_btc_link2").click();
-        $('#auto_bet_on').click();
+
+        // switch to auto bet
+        if (!$('#auto_bet_start_stop_button').is(':visible')) {
+            $('#auto_bet_on').click();
+        }
     }
 }
 
