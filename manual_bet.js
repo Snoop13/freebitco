@@ -132,6 +132,12 @@ function reset() {
     $('#double_your_btc_payout_multiplier').val(startPayout).keyup();
 }
 
+function checkJackpots() {
+    if ($('.width_margin_padding_setting span.checked').length) {
+        location.reload();
+    }
+}
+
 function hasEnoughMoney() {
     var balance = deExponentize(parseFloat($('#balance').text()));
     var current = deExponentize($('#double_your_btc_stake').val());
@@ -174,6 +180,11 @@ $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
             console.log('Approaching redirect! Stop the game so we don\'t get redirected while loosing.');
             stopGame();
 
+            return;
+        }
+
+        if (checkJackpots()) {
+            console.log('weird, has jackpos! restart');
             return;
         }
 
