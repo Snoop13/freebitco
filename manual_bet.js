@@ -49,6 +49,11 @@ function initGame() {
         }
     }
 
+    // hide Jacpots
+    $(".width_margin_padding_setting").each(function() {
+        $(this).hide();
+    });
+
     startBalance = deExponentize(parseFloat($('#balance').text()));
     startTimestamp = new Date().getTime();
 }
@@ -134,12 +139,6 @@ function hasEnoughMoney() {
     return balance * stopPercentage > current;
 }
 
-function checkJackpots() {
-    if ($('.width_margin_padding_setting span.checked').length) {
-        location.reload();
-    }
-}
-
 function clickFreeRoll() {
     $('#free_play_form_button').click();
 }
@@ -175,10 +174,6 @@ $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
             console.log('Approaching redirect! Stop the game so we don\'t get redirected while loosing.');
             stopGame();
 
-            return;
-        }
-
-        if (checkJackpots()) {
             return;
         }
 
