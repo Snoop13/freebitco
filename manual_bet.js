@@ -54,13 +54,14 @@ function initGame() {
 }
 
 function getProfitLoss() {
-    return deExponentize(parseFloat($('#balance').text())) - startBalance;
+    return (deExponentize(parseFloat($('#balance').text())) - startBalance).toFixed(0);
 }
 
 function getElapsed() {
     var now = new Date().getTime();
     var min = ((now - startTimestamp) / 60000).toFixed(0);
     var sec = (((now - startTimestamp) % 60000) / 1000).toFixed(0);
+
     return min + 'm' + sec + 's';
 }
 
@@ -133,8 +134,14 @@ function hasEnoughMoney() {
     return balance * stopPercentage > current;
 }
 
+function checkJackpots() {
+    if ($('.width_margin_padding_setting span.checked').length) {
+        location.reload();
+    }
+}
+
 function clickFreeRoll() {
-    $('#free_play_form_button').click()
+    $('#free_play_form_button').click();
 }
 
 function stopBeforeRedirect() {
@@ -170,6 +177,11 @@ $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
 
             return;
         }
+
+        if (checkJackpots()) {
+            return;
+        }
+
         if (hasEnoughMoney()) {
             console.log('You WON, PL: ' + getProfitLoss() + ' elapsed: ' + getElapsed());
             reset();
@@ -182,6 +194,7 @@ $('#double_your_btc_bet_win').bind("DOMSubtreeModified", function(event) {
             console.log('no money');
             return;
         }
+
         setTimeout(function() {
             $hiloButton.click();
         }, getRandomWait());
